@@ -34,7 +34,15 @@ class PyMongoDatabaseWrapper:
                 result_fields_obj = {}
 
             query_results = self.client_db[collection_name].find(query_obj, result_fields_obj)
-            return [item for item in query_results]
+
+            rtn_data = [item for item in query_results]
+
+            # Parse _id field which is of type ObjectId to str
+            if len(rtn_data) > 0 and '_id' in rtn_data[0]:
+                for item in rtn_data:
+                    item['_id'] = str(item['_id'])
+
+            return rtn_data
         except Exception as e:
             raise e
 
@@ -44,7 +52,14 @@ class PyMongoDatabaseWrapper:
                 result_fields_obj = {}
 
             query_results = self.client_db[collection_name].find({}, result_fields_obj)
-            return [item for item in query_results]
+
+            rtn_data = [item for item in query_results]
+
+            if len(rtn_data) > 0 and '_id' in rtn_data[0]:
+                for item in rtn_data:
+                    item['_id'] = str(item['_id'])
+
+            return rtn_data
         except Exception as e:
             raise e
 
