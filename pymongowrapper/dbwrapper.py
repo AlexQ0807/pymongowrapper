@@ -19,11 +19,31 @@ class PyMongoDatabaseWrapper:
         except Exception as e:
             raise e
 
-    def collection_filter(self, collection_name: str, query_obj: dict, result_fields_obj=None):
+    def __apply_sort_by_key(self, data, sort_keys: list):
+        '''
+        sort_keys example:
+        [("key1", -1), ("key2", 1)]
+         1 => ascending
+        -1 => descending
+
+        :param data:
+        :param sort_keys:
+        :return:
+        '''
+        try:
+            data.sort(sort_keys)
+            return data
+        except Exception as e:
+            raise e
+
+    def collection_filter(self, collection_name: str, query_obj: dict, result_fields_obj=None,
+                          sort_keys: list =None, num_results=None):
         '''
         NOTE: result_fields_obj example:
         {"id": 1, "update_date": 1 } => will show only the id and update_date fields per result
 
+        :param sort_keys:
+        :param num_results:
         :param collection_name:
         :param query_obj:
         :param result_fields_obj:
@@ -34,6 +54,12 @@ class PyMongoDatabaseWrapper:
                 result_fields_obj = {}
 
             query_results = self.client_db[collection_name].find(query_obj, result_fields_obj)
+
+            if sort_keys is not None:
+                query_results = self.__apply_sort_by_key(data=query_results, sort_keys=sort_keys)
+
+            if num_results is not None:
+                query_results = query_results.limit(num_results)
 
             rtn_data = [item for item in query_results]
 
@@ -46,12 +72,19 @@ class PyMongoDatabaseWrapper:
         except Exception as e:
             raise e
 
-    def collection_find_all(self, collection_name: str, result_fields_obj=None):
+    def collection_find_all(self, collection_name: str, result_fields_obj=None,
+                            sort_keys: list = None, num_results=None):
         try:
             if result_fields_obj is None:
                 result_fields_obj = {}
 
             query_results = self.client_db[collection_name].find({}, result_fields_obj)
+
+            if sort_keys is not None:
+                query_results = self.__apply_sort_by_key(data=query_results, sort_keys=sort_keys)
+
+            if num_results is not None:
+                query_results = query_results.limit(num_results)
 
             rtn_data = [item for item in query_results]
 

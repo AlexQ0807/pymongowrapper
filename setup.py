@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='pymongowrapper',
-    version='0.1.1',
+    version='0.2.1',
     author='Alex Q',
     author_email='alex.quan0807@gmail.com',
     description='Personal Wrapper for Mongo DB operations',

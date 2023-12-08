@@ -39,7 +39,8 @@ class TestPyMongoDatabaseWrapper(unittest.TestCase):
         try:
             self.PMDW.collection_update_one(collection_name=self.collection_name, query_obj={'apple': 20},
                                             update_obj={'orange': 100})
-            results = self.PMDW.collection_filter(collection_name=self.collection_name, query_obj={'banana': 30})
+            results = self.PMDW.collection_filter(collection_name=self.collection_name, query_obj={'banana': 30},
+                                                  sort_keys=[('apple', -1), ('orange', 1)])
             pprint(results, indent=2)
             self.assertTrue(True)
         except Exception as e:
